@@ -12,7 +12,7 @@ function App() {
     return (
       <SocketContextWrapper>
       <Provider store={Store}>
-        <div className="App h-full">
+        <div className="App" style={{minHeight:"100vh"}}>
             <RoomContainer></RoomContainer>
         </div>
         </Provider>

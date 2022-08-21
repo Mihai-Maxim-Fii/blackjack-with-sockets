@@ -81,12 +81,15 @@ const NewRoom = (props) => {
             }
 
         }
+
     }
 
 
     const {isBusy: is_new_room_request_busy, isError: is_new_room_request_error, send_request: send_new_room_request} = useEmitWithResponse("new-room", (resp) => {
         if (resp.ok === true) {
-            //props.close_room() not working?
+
+            console.log("aici")
+            props.close_room()
             button_ref.current.click()
             
 
@@ -192,9 +195,9 @@ const NewRoom = (props) => {
 
         </div>
 
-        <div className=" h-10 bg-gray-500 p-4 w-full flex justify-center items-center text-white cursor-pointer hover:bg-green-500">
+        <div className=" h-10 bg-gray-500 p-4 w-full flex justify-center items-center text-white cursor-pointer hover:bg-green-500"   onClick={handle_new_room}>
             <button className=" "
-                onClick={handle_new_room}>
+              >
                 Add Room
             </button>
 

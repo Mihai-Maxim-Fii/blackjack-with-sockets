@@ -6,6 +6,7 @@ import bar_reducer from "./Reducers/BarReducer";
 import username_reducer from "./Reducers/UserReducer"
 import selected_room_reducer from "./Reducers/SelectedRoomReducer";
 import rooms_reducer from "./Reducers/RoomsReducer";
+import game_reducer from "./Reducers/GameReducer";
 
 
 const Store = configureStore({
@@ -13,7 +14,8 @@ const Store = configureStore({
         bar_reducer,
         username_reducer,
         selected_room_reducer,
-        rooms_reducer
+        rooms_reducer,
+        game_reducer
     },
     middleware:[thunk]
 })

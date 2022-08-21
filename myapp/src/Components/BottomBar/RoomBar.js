@@ -18,6 +18,13 @@ const RoomBar = () => {
     }
 
 
+    const try_to_start_game = () =>{
+
+      socket_context.emit("start-game", current_room_state.room, user_state.username)
+
+    }
+
+
     const send_room_chat_message = () => {
         if (message_input_ref.current.value.length !== 0) {
             socket_context.emit("room-chat-message", current_room_state.room, user_state.username, message_input_ref.current.value)
@@ -44,7 +51,7 @@ const RoomBar = () => {
 
             {
             user_state.username === current_room_state.room_object.owner &&
-             <button disabled={!current_room_state.room_object.start_game_ready?true:false} className={`  ${current_room_state.room_object.start_game_ready?" bg-green-500 hover:scale-110":"opacity-70 bg-red-500"} px-4 py-1 ml-2  rounded-sm  `}>
+             <button onClick={try_to_start_game} disabled={!current_room_state.room_object.start_game_ready?true:false} className={`  ${current_room_state.room_object.start_game_ready?" bg-green-500 hover:scale-110":"opacity-70 bg-red-500"} px-4 py-1 ml-2  rounded-sm  `}>
                 Start
             </button>
         } </div>

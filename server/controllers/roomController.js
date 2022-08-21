@@ -1,6 +1,7 @@
 const Rooms = require("../models/Rooms")
 const Users = require("../models/Users")
 const user_functions = require("../controllers/userController")
+const Games = require("../models/Games")
 
 const get_pulic_rooms =()=>{
     
@@ -93,7 +94,6 @@ const remove_user_owned_rooms_on_disconnect = (id)=>{
         if(second_player.length>0){
             second_player=second_player[0].name
 
-            console.log("scnd player", second_player)
 
             second_player=Users.get_user_id_by_name(second_player)
 
@@ -174,6 +174,50 @@ const try_to_exit_room = (room_name, id) =>{
 }
 
 
+const try_to_start_game = (room_name, username) => {
+    let room = Rooms.get_room_by_name(room_name)
+    if(room.owner.name===username){
+        if(room.start_game_ready){
+
+
+            Rooms.set_game_running(room_name,true)
+
+            let other_player = room.players.find(player=>player.name!==room.owner.name)
+
+            other_player = other_player.name
+
+            Games.add_new_game_object(room_name,room.owner.name,other_player)
+
+
+
+            room.ready_players=[]
+            room.start_game_ready=false
+
+            
+
+            return {
+                success:true,
+                msg:"Game is now running",
+                new_rooms:Rooms.get_rooms_public(),
+                new_game:Games.get_public_game_by_name(room_name)
+            }
+        }else{
+            return {
+                success:false,
+                msg:"Players are not ready",
+            }
+        }
+    }
+    else{
+        return {
+            success:false,
+            msg:"User is not the owner of the room",
+        }
+    }
+}
+
+
+
 
 const remove_room_membership_on_disconnect = (id) =>{
 
@@ -233,7 +277,8 @@ const try_to_join_room = (room_name, password, id)=>{
                     return {
                         success:true,
                         new_rooms:Rooms.get_rooms_public(),
-                        msg:`You have joined ${room_name} `
+                        msg:`You have joined ${room_name} `,
+                        socket_id:user.id
                     }
 
                 }
@@ -249,7 +294,8 @@ const try_to_join_room = (room_name, password, id)=>{
                 return {
                     success:true,
                     new_rooms:Rooms.get_rooms_public(),
-                    msg:`You have joined ${room_name} `
+                    msg:`You have joined ${room_name} `,
+                    socket_id:user.id
                 }
 
             }
@@ -273,5 +319,5 @@ const try_to_join_room = (room_name, password, id)=>{
 }
 
 module.exports = {
-    add_new_room,get_pulic_rooms,try_to_join_room,try_to_exit_room,remove_user_owned_rooms_on_disconnect, remove_room_membership_on_disconnect,try_to_add_user_to_ready
+    add_new_room,get_pulic_rooms,try_to_join_room,try_to_exit_room,remove_user_owned_rooms_on_disconnect, remove_room_membership_on_disconnect,try_to_add_user_to_ready,try_to_start_game
 }

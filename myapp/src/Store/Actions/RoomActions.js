@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux"
+
 const select_room = (room) =>{
 
 
@@ -27,6 +27,13 @@ const select_room = (room) =>{
         else{
 
         room_object=room_object[0]
+        
+        let username = getState().username_reducer.username
+
+        if(!room_object.players.includes(username)){
+        room_object={...room_object, game_running:false}
+        }
+
         dispatch({
             type:"SET_ROOM",
             payload:{
@@ -50,6 +57,27 @@ const join_room = ( ) =>{
     }
 }
 
+
+
+const leave_game_on_game_end = ( ) =>{
+    return (dispatch, getState)=>{
+      
+        dispatch({
+            type:"SET_ROOM",
+            payload:{
+                ...getState().selected_room_reducer,
+                room_object:{
+                    ...getState().selected_room_reducer.room_object,
+                    game_running:false
+                }
+             }
+            
+        })
+    }
+
+
+}
+
 const update_rooms = (rooms) => {
     return (dispatch, getState)=>{
 
@@ -62,8 +90,6 @@ const update_rooms = (rooms) => {
         })
 
         dispatch(select_room(getState().selected_room_reducer.room))
-
-
 
     }
 }
@@ -88,4 +114,4 @@ const reset_selected_room = ()=>{
     }
 }
 
-export default {select_room, reset_selected_room, join_room, exit_room, update_rooms}
+export default {select_room, reset_selected_room, join_room, exit_room, update_rooms,leave_game_on_game_end}

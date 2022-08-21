@@ -34,9 +34,7 @@ const RoomLinks = (props) => {
 
     const socket_context = useContext(MySocketContext)
 
-    socket_context.on("rooms-update", (rooms) => {
-        dispatch(RoomActions.update_rooms(rooms))
-    })
+   
 
 
     return (

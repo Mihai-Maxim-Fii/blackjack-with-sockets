@@ -33,10 +33,13 @@ const add_player_to_ready = (user_object, room_name)=>{
         Rooms[index_of_room].start_game_ready=false
     }
 
+
 }
 
 
 const set_game_running = (room_name, value) => {
+
+
     let room_to_edit = Rooms.filter(room=>room.room_data.room_name===room_name)[0]
 
 
@@ -115,6 +118,10 @@ const get_rooms = ()=>{
     return Rooms
 }
 
+const get_room_by_name = (room_name) => {
+
+    return  Rooms.filter(room=>room.room_data.room_name===room_name)[0]
+}
 
 
 const delete_room_by_name = (room_name) =>{
@@ -124,4 +131,4 @@ const delete_room_by_name = (room_name) =>{
 }
 
 
-module.exports={add_room, get_rooms, delete_room_by_name, get_rooms_public, add_player_to_room, add_player_to_ready, set_game_running, remove_player_from_room}
+module.exports={add_room, get_rooms, delete_room_by_name, get_rooms_public, add_player_to_room, add_player_to_ready, set_game_running, remove_player_from_room, get_room_by_name}
