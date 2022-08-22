@@ -59,29 +59,10 @@ const join_room = ( ) =>{
 
 
 
-const leave_game_on_game_end = ( ) =>{
-    return (dispatch, getState)=>{
-      
-        dispatch({
-            type:"SET_ROOM",
-            payload:{
-                ...getState().selected_room_reducer,
-                room_object:{
-                    ...getState().selected_room_reducer.room_object,
-                    game_running:false
-                }
-             }
-            
-        })
-    }
-
-
-}
 
 const update_rooms = (rooms) => {
     return (dispatch, getState)=>{
-
-        console.log(rooms)
+        
         dispatch({
             type:"UPDATE_ROOMS",
             payload:{
@@ -114,4 +95,4 @@ const reset_selected_room = ()=>{
     }
 }
 
-export default {select_room, reset_selected_room, join_room, exit_room, update_rooms,leave_game_on_game_end}
+export default {select_room, reset_selected_room, join_room, exit_room, update_rooms}

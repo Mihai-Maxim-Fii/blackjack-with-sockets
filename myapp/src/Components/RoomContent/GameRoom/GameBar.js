@@ -8,6 +8,7 @@ const GameBar = () => {
     
     const game_state = useSelector(state=>state.game_reducer.game)
 
+
     const user_name = useSelector(state => state.username_reducer.username)
 
 
@@ -19,6 +20,8 @@ const GameBar = () => {
     dealer_hit:"dealer_hit"
 
     */
+
+
 
     let is_finished = game_state[user_name].done
 

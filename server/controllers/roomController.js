@@ -1,6 +1,7 @@
 const Rooms = require("../models/Rooms")
 const Users = require("../models/Users")
 const user_functions = require("../controllers/userController")
+const game_functions = require("../controllers/gameController")
 const Games = require("../models/Games")
 
 const get_pulic_rooms =()=>{
@@ -126,6 +127,9 @@ const remove_user_owned_rooms_on_disconnect = (id)=>{
     // 
 }
 
+
+
+
 const try_to_exit_room = (room_name, id) =>{
     let user=user_functions.get_logged_user(id)
 
@@ -175,10 +179,11 @@ const try_to_exit_room = (room_name, id) =>{
 
 
 const try_to_start_game = (room_name, username) => {
+
     let room = Rooms.get_room_by_name(room_name)
     if(room.owner.name===username){
-        if(room.start_game_ready){
 
+        if(room.start_game_ready){
 
             Rooms.set_game_running(room_name,true)
 
@@ -188,12 +193,9 @@ const try_to_start_game = (room_name, username) => {
 
             Games.add_new_game_object(room_name,room.owner.name,other_player)
 
-
-
             room.ready_players=[]
-            room.start_game_ready=false
 
-            
+            room.start_game_ready=false
 
             return {
                 success:true,
@@ -219,7 +221,7 @@ const try_to_start_game = (room_name, username) => {
 
 
 
-const remove_room_membership_on_disconnect = (id) =>{
+const remove_room_membership_on_disconnect = (id,socket_io) =>{
 
     let user=user_functions.get_logged_user(id)
 
@@ -227,10 +229,13 @@ const remove_room_membership_on_disconnect = (id) =>{
 
     let user_member_room = all_rooms.filter((room)=>room.players.some(player=>player===user.name))
 
-
     if(user_member_room.length!==0){
 
         Rooms.remove_player_from_room(user, user_member_room[0].room_data.room_name)
+
+        game_functions.end_game_on_disconnect(user.name, user_member_room[0].room_data.room_name, socket_io)
+
+
         return {
             success:true,
             msg:"User was removed from a room!",

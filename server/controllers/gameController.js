@@ -8,6 +8,8 @@ const draw_initial_cards = () => {}
 
 const set_player_finish = (user_name, game_name) => {
 
+    try{
+
     let game = Games.get_game_by_name(game_name)
 
     let player_data = game[user_name]
@@ -29,12 +31,18 @@ const set_player_finish = (user_name, game_name) => {
         }
 
     }
+}
+catch(error){
+
+}
 
 
 }
 
 
 const deal_card_to_player = (game, player_name, socket_io) => {
+
+    try{
 
     let game_name = game.game_name
 
@@ -65,12 +73,12 @@ const deal_card_to_player = (game, player_name, socket_io) => {
         if (best_value === 21) {
             socket_io.to(game_name).emit("game-log", {
                     msg: `${player_name} has scored a Blackjack! He wins ${
-                    game[player_name].current_bet
+                    Math.floor(game[player_name].current_bet*1.5)
                 }`
             })
 
             game[player_name].won_blackjack=true
-            game[player_name].funds = game[player_name].funds + game[player_name].current_bet
+            game[player_name].funds = game[player_name].funds + Math.floor(game[player_name].current_bet*1.5)
             game[player_name].current_bet = 0
             game[player_name].done = true
             socket_io.to(game_name).emit("game-update", Games.get_public_game_by_name(game_name))
@@ -110,10 +118,14 @@ const deal_card_to_player = (game, player_name, socket_io) => {
 
         socket_io.to(game_name).emit("game-update", Games.get_public_game_by_name(game_name))
 
-        delete_game(game_name)
+        delete_game(game_name, socket_io)
 
 
     }
+
+}catch(error){
+
+}
 
 }
 
@@ -121,6 +133,8 @@ const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].
 
 
 const calculate_best_value_of_pack = (pack) => {
+
+    try{
 
     let pack_values_array = []
 
@@ -157,6 +171,11 @@ const calculate_best_value_of_pack = (pack) => {
         return {best_value: pack[0].value_one, overflow: false}
     }
 
+}
+catch(error){
+
+}
+
 
 }
 
@@ -165,6 +184,8 @@ const update_winings = (game, socket_io) => {}
 
 
 const deal_card_to_dealer = (game, socket_io, secret) => {
+
+    try{
 
     let game_name = game.game_name
 
@@ -228,10 +249,14 @@ const deal_card_to_dealer = (game, socket_io, secret) => {
 
         socket_io.to(game_name).emit("game-update", Games.get_public_game_by_name(game_name))
 
-        delete_game(game_name)
+        delete_game(game_name,socket_io)
 
 
     }
+}
+catch(error){
+
+}
 
 
 }
@@ -239,6 +264,7 @@ const deal_card_to_dealer = (game, socket_io, secret) => {
 
 const switch_to_deal = (game_name, socket_io) => {
 
+    try{
 
     let game = Games.get_game_by_name(game_name)
 
@@ -303,12 +329,20 @@ const switch_to_deal = (game_name, socket_io) => {
         switch_to_hit(game_name, socket_io)
 
 
+}
+catch(error){
+
+}
+
+
     
 
 
 }
 
 const handle_player_hit = (game_name, player_name, socket_io) => {
+
+    try{
 
     socket_io.to(game_name).emit("game-log", {msg: `${player_name} hit!`})
 
@@ -347,23 +381,85 @@ const handle_player_hit = (game_name, player_name, socket_io) => {
             }, 5000);
         }
     }
+}catch(error){
+
+}
 
 
 }
 
-const delete_game = (game_name)=>{
+const end_game_on_disconnect = (user_name, game_name, socket_io)=>{
+    
+    let game = Games.get_game_by_name(game_name)
+
+    if(game!==undefined){
+
+
+        game.game_ended = true
+        
+        let all_users = game.serve_order
+
+        all_users.forEach( (user)=>{
+            game[user].done=true
+            game[user].done=true
+
+        })
+
+        game.ready_players=[]
+
+        socket_io.to(game_name).emit("end-screen",{
+            value:true
+        })
+    
+        let room = Rooms.get_room_by_name(game_name)
+    
+        room.game_running=false
+
+
+        socket_io.to(game_name).emit("game-log", {
+            msg:`${user_name} left, the game ended!`
+        })
+
+        socket_io.in("lobby").emit("rooms-update", Rooms.get_rooms_public())
+    
+        socket_io.to(game_name).emit("game-update", Games.get_public_game_by_name(game_name))
+
+        delete_game(game_name, socket_io)
+
+
+    }
+
+}
+
+const delete_game = (game_name, socket_io)=>{
+
+    try{
 
     Games.delete_game_by_name(game_name)
 
+
+    socket_io.to(game_name).emit("end-screen",{
+        value:true
+    })
+
     let room = Rooms.get_room_by_name(game_name)
 
-    console.log("Rooom here",room)
+    room.game_running=false
+
+    socket_io.in("lobby").emit("rooms-update", Rooms.get_rooms_public())
+}catch(error){
+
+}
+
 
 }
 
 
 
 const switch_to_dealer_hit = (game_name, socket_io) => {
+     
+    try{
+
     let game = Games.get_game_by_name(game_name)
 
     game.state = "dealer_hit"
@@ -481,12 +577,18 @@ const switch_to_dealer_hit = (game_name, socket_io) => {
         },2000)
 
     }
+}
+catch(error){
+
+}
 
 
 }
 
 
 const switch_to_bet = (game_name, socket_io) => {
+
+    try {
 
     let game = Games.get_game_by_name(game_name)
     let users = game.serve_order
@@ -551,11 +653,15 @@ const switch_to_bet = (game_name, socket_io) => {
 
         socket_io.to(game_name).emit("game-update", Games.get_public_game_by_name(game_name))
 
-        delete_game(game_name)
+        delete_game(game_name, socket_io)
 
         
 
     }
+}
+catch(err){
+
+}
 
 
 
@@ -563,6 +669,8 @@ const switch_to_bet = (game_name, socket_io) => {
 
 
 const switch_to_hit = (game_name, socket_io) => {
+
+    try{
 
     let game = Games.get_game_by_name(game_name)
      
@@ -603,6 +711,10 @@ const switch_to_hit = (game_name, socket_io) => {
     socket_io.to(game_name).emit("game-update", Games.get_public_game_by_name(game_name))
     }
 }
+    catch(error){
+        
+    }
+}
 
 
 const switch_state = (game_name, socket_io) => {
@@ -634,6 +746,8 @@ const switch_state = (game_name, socket_io) => {
 
 const set_bet = (username, game_name, bet_value) => {
 
+    try{
+
     let game = Games.get_game_by_name(game_name)
 
     if (game.state === "bet") {
@@ -650,6 +764,10 @@ const set_bet = (username, game_name, bet_value) => {
             }
         }
     }
+    }
+    catch(error){
+
+    }
 }
 
 
@@ -657,5 +775,6 @@ module.exports = {
     set_bet,
     set_player_finish,
     switch_state,
-    handle_player_hit
+    handle_player_hit,
+    end_game_on_disconnect
 }

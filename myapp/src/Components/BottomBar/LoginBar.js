@@ -10,7 +10,7 @@ const LoginBar = () => {
     const dispatch_action = useDispatch()
 
     const validate_name_function = (name) => {
-        return name.split("").length > 6
+        return name.split("").length > 5
     }
 
     const socket_context = useContext(MySocketContext)
@@ -38,14 +38,14 @@ const LoginBar = () => {
         valid: false
     });
 
-    return (<div className=" flex h-full items-center px-2">
-        <div className=" flex h-full justify-center w-full items-center ">
+    return (<div className=" flex h-full items-center ">
+        <div className=" flex h-full justify-center w-full items-center px-4 ">
             <div className=" flex gap-2 ">
                 <label>Username:</label>
                 <input type="text" placeholder=" min 6 characters..."
                     className={
-                        ` h-8 px-2 bg-white text-black ${
-                            username.valid ? "bg-white" : "bg-red-50"
+                        ` h-8 px-2  bg-white text-black ${
+                            username.valid ? "bg-green-500 text-white" : "bg-red-50"
                         }`
                     }
                     onChange={
@@ -58,7 +58,7 @@ const LoginBar = () => {
                 }></input>
             </div>
         </div>
-        <button className="mr-2"
+        <button className=" bg-orange-300 hover:bg-green-500 h-full w-full"
             onClick={
                 () => {
                     if (username.valid) {
@@ -69,9 +69,12 @@ const LoginBar = () => {
                             }
                                            )
                     }
+                    else{
+                        alert("Username must be at least 6 characters long!")
+                    }
                 }
         }>
-            Join
+            Enter Lobby
         </button>
     </div>)
 }

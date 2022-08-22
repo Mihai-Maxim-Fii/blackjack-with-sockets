@@ -81,9 +81,6 @@ const add_new_game_object = (game_name, owner_name, second_player_name) => {
 
     Games.push(new_game_object)
 
-    console.log(Games)
-
-
 }
 
 

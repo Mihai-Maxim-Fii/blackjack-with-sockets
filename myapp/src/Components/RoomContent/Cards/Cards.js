@@ -3,13 +3,12 @@ import Card from "./Card"
 const Cards = (props)=>{
 
     return (
-        <div className=" w-full h-full flex gap-4 justify-center items-center">
-            { console.log(props)}
+        <div className=" h-full flex gap-4 justify-center items-center">
         {
             
        
-        props.cards.map(card=> {
-            return <Card {...card}>
+        props.cards.map((card,index)=> {
+            return <Card  key={index} {...card}>
 
             </Card>
         })

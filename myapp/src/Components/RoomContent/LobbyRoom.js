@@ -23,11 +23,9 @@ const LobbyRoom = () => {
 
     let ready_players = selected_room_state.room_object.ready_players
 
-    
+
     useEffect(() => {
         socket_context.on("room-chat-message-response", (message_object) => {
-
-            console.log(message_object)
 
             set_room_messages((old) => [
                 ...old,

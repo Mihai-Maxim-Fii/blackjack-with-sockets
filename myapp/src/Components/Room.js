@@ -13,6 +13,9 @@ const Room = () => {
     const game_state = useSelector(state=>state.game_reducer)
 
     const socket_context = useContext(MySocketContext)
+
+    const show_end_screen = useSelector(state => state.end_screen_reducer.show_end_screen)
+
     const dispatch = useDispatch()
 
     useEffect( ()=>{
@@ -25,9 +28,30 @@ const Room = () => {
         }
 
     },[])
+
+    useEffect ( () =>{
+        socket_context.on("end-screen",(data)=>{
+            if(data.value===true){
+                dispatch(
+                    {
+                        type:"SHOW_END_SCREEN"
+                    }
+                )
+            }
+            else{
+
+                dispatch(
+                    {
+                        type:"HIDE_END_SCREEN"
+                    }
+                )
+            }
+        })
+
+    })
     return (
         <div className=" w-full h-full">
-            {is_game_running?
+            {(is_game_running || show_end_screen)?
             <GameContainer></GameContainer>:
             <div className="w-full  text-black  flex flex-col justify-center items-center"
                 style={

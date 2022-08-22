@@ -3,7 +3,7 @@
 
 const update_game = (game)=>{
     return (dispatch, getState)=>{
-        console.log(game)
+        
         dispatch({
             type:"UPDATE_GAME",
             payload:{

@@ -12,7 +12,6 @@ const HitButton = () =>{
     const user_name = useSelector(state => state.username_reducer.username)
 
     const send_hit = () =>{
-        console.log("aici")
         socket_context.emit("send-hit", user_name,game_name)
     }
 

@@ -87,8 +87,6 @@ const NewRoom = (props) => {
 
     const {isBusy: is_new_room_request_busy, isError: is_new_room_request_error, send_request: send_new_room_request} = useEmitWithResponse("new-room", (resp) => {
         if (resp.ok === true) {
-
-            console.log("aici")
             props.close_room()
             button_ref.current.click()
             

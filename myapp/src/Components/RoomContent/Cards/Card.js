@@ -1,14 +1,14 @@
 const Card = (props) =>{
+   let image_name= `${props.name}_of_${props.type}.png`
+
+
     return(
-        <div className=" flex flex-col gap-2">
-            <p>
-                {`${props.name} of ${props.type}`}
-            </p>
-            <p>
-                {
-                    props.value_one
-                }
-            </p>
+        <div className=" ">
+          
+            <img src={`/CardImages/${image_name}`}  className="shadow-black shadow-md" style={{
+               height:"16vh"
+            }} />
+        
         </div>
     )
 }

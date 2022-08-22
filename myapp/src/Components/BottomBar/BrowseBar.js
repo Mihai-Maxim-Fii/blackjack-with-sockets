@@ -45,7 +45,7 @@ const BrowseBar = () => {
 
     const join_room = () =>{
         //dispatch(RoomActions.join_room(selected_room_state.room))
-        if(!selected_room_state.selected){
+        if(selected_room_state.room===""){
             alert("Please select a room!")
             return
         }

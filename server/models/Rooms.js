@@ -20,21 +20,23 @@ const add_room=(room_data, owner)=>{
 const add_player_to_ready = (user_object, room_name)=>{
     let room_to_edit = Rooms.filter(room=>room.room_data.room_name===room_name)[0]
 
-    let index_of_room = Rooms.indexOf(room_to_edit)
 
-    if(!Rooms[index_of_room].ready_players.some(p=>p.name===user_object.name)){
-       Rooms[index_of_room].ready_players.push(user_object)
+    if(!room_to_edit.ready_players.some(p=>p.name===user_object.name)){
+        room_to_edit.ready_players.push(user_object)
        
-       if(Rooms[index_of_room].players.every(p=>Rooms[index_of_room].ready_players.some(rp=>rp.name===p.name)))
-       Rooms[index_of_room].start_game_ready=true
+       if(room_to_edit.players.every(p=>room_to_edit.ready_players.some(rp=>rp.name===p.name)) && room_to_edit.players.length===2)
+       room_to_edit.start_game_ready=true
     } 
     else{
-        Rooms[index_of_room].ready_players=Rooms[index_of_room].ready_players.filter(p=>p.name!==user_object.name)
-        Rooms[index_of_room].start_game_ready=false
+        room_to_edit.ready_players=room_to_edit.ready_players.filter(p=>p.name!==user_object.name)
+        room_to_edit.start_game_ready=false
     }
 
 
 }
+
+
+
 
 
 const set_game_running = (room_name, value) => {

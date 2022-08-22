@@ -39,26 +39,19 @@ const remove_user_owned_rooms_on_disconnect=(socket)=>{
         }
 
     }
+
 }
 
+
 const remove_room_membership_on_disconnect=(socket)=>{
-    let was_room_member = room_functions.remove_room_membership_on_disconnect(socket.id)
+    let was_room_member = room_functions.remove_room_membership_on_disconnect(socket.id, socket_io)
+
+
     if(was_room_member.success){
 
+
+
         socket_io.to("lobby").emit("rooms-update", was_room_member.new_rooms)
-
-
-
-        const user_socket=socket_io.sockets.sockets.get(socket.id)
-
-        try{
-
-        user_socket.leave(was_room_member.old_room_name)
-        }
-        catch(error){
-            console.log(error)
-        }
-
 
 
     }
@@ -81,6 +74,7 @@ const handle_disconnect = (socket) =>{
         ok: true,
         msg: "You are logged out!"
     })
+    
     }  
     catch(error){
         console.log(error)
@@ -116,6 +110,8 @@ socket_io.on("connection", (socket) => {
     })
 
     socket.on("set-player-finish",(user_name,game_name)=>{
+
+        try{
        let response=game_functions.set_player_finish(user_name,game_name)
 
        if(response.success){
@@ -133,14 +129,28 @@ socket_io.on("connection", (socket) => {
 
         }
        }
+    }
+    catch(err){
+        console.log(err)
+    }
+
+
+
     })
 
 
     socket.on("send-hit", (user_name,game_name)=>{
+        try{
         game_functions.handle_player_hit(game_name,user_name,socket_io)
+        }
+        catch(err){
+            console.log(err)
+        }
     })
 
     socket.on("set-bet",(user_name, game_name, bet_value)=>{
+
+        try{
         let response=game_functions.set_bet(user_name, game_name, parseInt(bet_value))
         if(response.success){
             socket_io.to(game_name).emit("game-update",response.new_game)
@@ -149,10 +159,15 @@ socket_io.on("connection", (socket) => {
             })
 
         }
+    }
+    catch(err){
+        console.log(err)
+    }
 
     })
 
     socket.on("logout", () => {
+
 
         handle_disconnect(socket)
 
@@ -160,33 +175,51 @@ socket_io.on("connection", (socket) => {
 
 
     socket.on("toggle-ready", (room_name, username)=>{
+
+        try{
         let add_response = room_functions.try_to_add_user_to_ready(room_name,username)
+
+
 
         if(add_response.success){
 
             socket_io.in("lobby").emit("rooms-update", add_response.new_rooms)
 
         }
-
+    }
+    catch(err){
+        console.log(err)
+    }
         
     })
 
 
 
     socket.on("get-rooms",()=>{
+        try{
         socket_io.to(socket.id).emit("get-rooms-response",{ok:true, rooms:room_functions.get_pulic_rooms()})
+
+    }catch(err){
+        console.log(err)
+    }
     })
 
 
     socket.on("room-chat-message",(room_name, from, message)=>{
+        try{
         socket_io.to(room_name).emit("room-chat-message-response",{
             from,
             message,
             time:get_current_moment()
         })
+    }catch(err){
+        console.log(err)
+    }
     })
 
     socket.on("exit-room",(room_name)=>{
+
+        try{
 
         let exit_room_response = room_functions.try_to_exit_room(room_name, socket.id)
 
@@ -200,12 +233,18 @@ socket_io.on("connection", (socket) => {
         else{
             socket_io.to(socket.id).emit("exit-room-response",{ok:false,msg:exit_room_response.msg})
         }
+
+    }catch(err){
+        console.log(err)
+    }
         
     })
 
     
 
     socket.on("join-room",(room_info)=>{
+
+        try{
 
         let join_request_response=room_functions.try_to_join_room(room_info.room_name, room_info.password, socket.id)
         if(join_request_response.success){
@@ -225,10 +264,16 @@ socket_io.on("connection", (socket) => {
         else{
             socket_io.to(socket.id).emit("join-room-response",{ok:false, msg:join_request_response.msg})
         }
+    }
+    catch(err){
+        console.log(err)
+    }
         
     })
 
     socket.on("start-game", (room_name, username)=>{
+
+        try{
         const start_game_response  = room_functions.try_to_start_game(room_name, username)
         if(start_game_response.success){
            
@@ -240,11 +285,17 @@ socket_io.on("connection", (socket) => {
             })
               
         }
+    }
+    catch(err){
+        console.log(err)
+    }
 
     })
 
 
     socket.on("login", (user_object) => {
+
+        try{
         if (user_functions.add_new_user(user_object)) {
             socket.join("lobby")
             socket_io.to(socket.id).emit("login-response", ({ok: true, msg: "Welcome"}))
@@ -252,11 +303,17 @@ socket_io.on("connection", (socket) => {
          else 
            socket_io.to(socket.id).emit("login-response", ({ok: false, msg: "User already exists!"}))
 
+        }catch(err){
+            console.log(err)
+        }
+
         
 
     })
 
     socket.on("new-room", (room_data) => {
+
+        try {
 
         let logged_user_object = user_functions.get_logged_user(socket.id)
 
@@ -268,6 +325,11 @@ socket_io.on("connection", (socket) => {
         } else {
             socket_io.to(socket.id).emit("new-room-response", {ok: false, msg: "Your cannot create a room, you are not logged in!"})
         }
+
+    }
+    catch(err){
+        console.log(err)
+    }
     })
 
 })

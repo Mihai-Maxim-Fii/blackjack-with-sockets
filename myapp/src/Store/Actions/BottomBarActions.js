@@ -23,8 +23,6 @@ const login_user = (username) =>{
 
 const logout_user = (username)=>{
     return (dispatch, getState)=>{
-        console.log(username)
-
         dispatch({
             type:"LOGOUT_USER",
             payload:null

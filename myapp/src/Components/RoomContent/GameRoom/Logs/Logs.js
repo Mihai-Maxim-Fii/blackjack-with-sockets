@@ -7,7 +7,6 @@ import { useSelector } from "react-redux"
 import ArrowDownIcon from "../../../svgs/DownArrow"
 import ArrowUpShortIcon from "../../../svgs/UpArrow"
 import { useDispatch } from "react-redux"
-import RoomActions from "../../../../Store/Actions/RoomActions"
 
 const Logs = () => {
 
@@ -54,7 +53,12 @@ const Logs = () => {
 
 
     const handle_leave_game_on_game_over = ()=>{
-        dispatch(RoomActions.leave_game_on_game_end())
+
+        dispatch(
+            {
+                type:"HIDE_END_SCREEN"
+            }
+        )
     }
 
     return  <div className=" w-full h-full ">
